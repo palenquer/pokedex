@@ -1,18 +1,8 @@
 import axios from "axios";
-import type { GetStaticProps } from "next";
 import Head from "next/head";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 
-interface HomeProps {
-  page: PageProps;
-  pokelist: Pokelist[];
-}
-
-interface PageProps {
-  count: number;
-  next: string;
-  previous?: string;
-}
 interface DataProps {
   name: string;
   url: string;
@@ -32,9 +22,68 @@ interface TypesProps {
   };
 }
 
-const Home = ({ page, pokelist }: HomeProps) => {
+const Home = () => {
+  const [pokelist, setPokelist] = useState<Pokelist[]>([]);
+
+  async function fetchData(url: string) {
+    return await axios
+      .get(url)
+      .then((response) => response.data)
+      .catch((error) => console.error(error));
+  }
+
+  function fetchAllData(urls: []) {
+    return Promise.all(urls.map(fetchData));
+  }
+
+  async function getData(url: string) {
+    const response = await axios
+      .get(url)
+      .then((response) => response.data)
+      .catch((error) => {
+        console.error(error);
+      });
+
+    const data = response.results;
+
+    const urls = data.map((item: DataProps) => item.url);
+
+    const pokelistInfo = await fetchAllData(urls).then((response) => {
+      return response.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          sprite: item.sprites.front_default,
+          types: item.types.map((res: TypesProps) => res.type.name),
+        };
+      });
+    });
+
+    return pokelistInfo;
+  }
+
+  const fetchInicialData = async () => {
+    const inicialData = await getData(
+      "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"
+    );
+
+    setPokelist(inicialData);
+  };
+
+  const fetchNextData = async () => {
+    const nextData = await getData(
+      `https://pokeapi.co/api/v2/pokemon/?offset=${pokelist.length}&limit=20`
+    );
+
+    const filterData = nextData.filter((item) => item.id <= 151);
+
+    setPokelist((oldList) => [...oldList, ...filterData]);
+
+    return filterData;
+  };
+
   useEffect(() => {
-    console.log(pokelist);
+    fetchInicialData();
   }, []);
 
   return (
@@ -45,35 +94,44 @@ const Home = ({ page, pokelist }: HomeProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="lg:mx-auto lg:container lg:px-40 md:py-8 p-4 flex flex-col gap-8">
+      <main className="lg:mx-auto lg:container lg:px-40 md:py-8 p-4 flex flex-col gap-8 ">
         <input
-          className="w-full p-2 rounded-md placeholder:italic text-gray-800"
+          className="w-full p-2 rounded-md placeholder:italic text-gray-800 border-2 border-lightgray"
           type="text"
           placeholder="Search"
         />
 
-        <div className="flex flex-col items-center gap-8 md:grid md:grid-cols-2 xl:grid-cols-4">
+        <InfiniteScroll
+          dataLength={pokelist.length}
+          next={fetchNextData}
+          className="flex flex-col items-center gap-8 sm:grid grid-cols-2 xl:grid-cols-4 h-96 overflow-auto"
+          hasMore={true}
+          loader={false}
+        >
           {pokelist.map((item) => {
-            
             return (
               <div
                 key={item.id}
-                className={`bg-background flex flex-col justify-center items-center relative py-4 px-12 rounded-md w-full border-type-${item.types[0]} border-4`}
+                className={`bg-background flex flex-col justify-center items-center relative pb-4 rounded-md w-full border-type-${item.types[0]} border-4`}
               >
-                <div className={`absolute top-4 right-4 bg-type-${item.types[0]} w-8 h-8 flex justify-center items-center rounded-2xl text-background`}>
-                  <span className="font-bold text-sm">{item.id}</span>
+                <div
+                  className={`bg-type-${item.types[0]} w-full flex items-center text-background p-2 relative`}
+                >
+                  <h1 className="w-full text-center font-bold">
+                    {item.name.toUpperCase()}
+                  </h1>
+
+                  <span className=" absolute top-2 right-2 ml-auto font-bold">
+                    #{item.id}
+                  </span>
                 </div>
 
                 <div className="flex flex-col items-center">
-                  <h1 className="font-bold text-lg">
-                    {item.name.toUpperCase()}
-                  </h1>
                   <img src={item.sprite} alt="sprite" />
                 </div>
 
                 <div className="flex gap-2">
                   {item.types.map((type) => {
-                    
                     return (
                       <span
                         key={type}
@@ -87,62 +145,10 @@ const Home = ({ page, pokelist }: HomeProps) => {
               </div>
             );
           })}
-        </div>
+        </InfiniteScroll>
       </main>
     </>
   );
 };
 
 export default Home;
-
-export const getStaticProps: GetStaticProps = async () => {
-  async function fetchData(url: string) {
-    return await axios
-      .get(url)
-      .then((response) => response.data)
-      .catch((error) => console.error(error));
-  }
-
-  function getAllData(urls: []) {
-    return Promise.all(urls.map(fetchData));
-  }
-
-  const response = await axios
-    .get("https://pokeapi.co/api/v2/pokemon/?offset=0&limit=12")
-    .then((response) => response.data)
-    .catch((error) => {
-      console.error(error);
-    });
-
-  const page = {
-    count: response.count,
-    next: response.next,
-    previous: response.previous,
-  };
-
-  const data = response.results;
-
-  const urls = data.map((item: DataProps) => item.url);
-
-  const pokelist = await getAllData(urls)
-    .then((response) => {
-      return response.map((item) => {
-        return {
-          id: item.id,
-          name: item.name,
-          sprite: item.sprites.front_default,
-          types: item.types.map((res: TypesProps) => res.type.name),
-        };
-      });
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-
-  return {
-    props: {
-      page,
-      pokelist,
-    },
-  };
-};
