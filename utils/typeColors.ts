@@ -1,4 +1,4 @@
-export const typeColors = {
+export const backgroundColors = {
   rock: "bg-type-rock",
   ghost: "bg-type-ghost",
   steel: "bg-type-steel",
