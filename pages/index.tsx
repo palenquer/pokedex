@@ -59,7 +59,6 @@ const Home = () => {
 
   async function fetchInicialData() {
     setLoading(true);
-
     const timer = setTimeout(async () => {
       const inicialData = await getData(
         "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"
@@ -67,13 +66,14 @@ const Home = () => {
 
       setPokelist(inicialData);
 
+      setLoading(false);
+
       return () => clearTimeout(timer);
     }, 2000);
   }
 
   async function fetchNextData() {
     setLoading(true);
-
     const timer = setTimeout(async () => {
       const nextData = await getData(
         `https://pokeapi.co/api/v2/pokemon/?offset=${pokelist.length}&limit=20`
@@ -82,6 +82,8 @@ const Home = () => {
       const filterData = nextData.filter((item) => item.id <= 809);
 
       setPokelist((oldList) => [...oldList, ...filterData]);
+
+      setLoading(false);
 
       return () => clearTimeout(timer);
     }, 2000);
@@ -111,12 +113,12 @@ const Home = () => {
             return (
               <Link href={`/pokemon/${pokemon.id}`} key={pokemon.id}>
                 <a className="w-full">
-                <PokeCard
-                  id={pokemon.id}
-                  types={pokemon.types}
-                  name={pokemon.name}
-                  sprite={pokemon.sprite}
-                />
+                  <PokeCard
+                    id={pokemon.id}
+                    types={pokemon.types}
+                    name={pokemon.name}
+                    sprite={pokemon.sprite}
+                  />
                 </a>
               </Link>
             );
