@@ -6,24 +6,16 @@ interface PokeCardProps {
   name: string;
   sprite: string;
   types: [string];
-  onClick: (ev: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export default function PokeCard({
-  id,
-  types,
-  name,
-  sprite,
-  onClick,
-}: PokeCardProps) {
+export default function PokeCard({ id, types, name, sprite }: PokeCardProps) {
   return (
-    <motion.button
-      className={`bg-background flex flex-col justify-center items-center relative pb-4 rounded-md w-full border-4 border-type-${types[0]} transition hover:scale-105`}
+    <motion.div
+      className={`bg-white flex flex-col justify-center items-center relative pb-4 rounded-md border-4 border-type-${types[0]} transition hover:scale-105`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ ease: "easeOut", duration: 1 }}
-      onClick={onClick}
     >
       <div
         className={`bg-type-${types[0]} w-full flex items-center text-background p-2 relative`}
@@ -34,7 +26,7 @@ export default function PokeCard({
       </div>
 
       <div className="flex flex-col items-center">
-        <img src={sprite} alt="sprite"/>
+        <img src={sprite} alt="sprite" />
       </div>
 
       <div className="flex gap-2">
@@ -49,6 +41,6 @@ export default function PokeCard({
           );
         })}
       </div>
-    </motion.button>
+    </motion.div>
   );
 }
