@@ -6,6 +6,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import PokeCard from "../components/PokeCard";
 import SearchInput from "../components/SearchInput";
 import Loading from "../components/Loading";
+import Link from "next/link";
 
 interface DataProps {
   name: string;
@@ -53,8 +54,6 @@ const Home = () => {
       });
     });
 
-    setLoading(false);
-
     return pokelistInfo;
   }
 
@@ -88,17 +87,6 @@ const Home = () => {
     }, 2000);
   }
 
-  async function getPokemon(selectedPokemon: number) {
-    const selectPokemon = await axios
-      .get(`https://pokeapi.co/api/v2/pokemon/${selectedPokemon}`)
-      .then((response) => response.data)
-      .catch((error) => {
-        console.error(error);
-      });
-      
-    return selectPokemon;
-  }
-
   useEffect(() => {
     fetchInicialData();
   }, []);
@@ -109,7 +97,7 @@ const Home = () => {
         <title>Pokedéx | Home</title>
       </Head>
 
-      <main className="lg:mx-auto lg:container lg:px-40 md:py-8 p-4 flex flex-col gap-8">
+      <main className="lg:mx-auto lg:container lg:px-40 md:py-8 p-4 flex flex-col">
         <SearchInput />
 
         <InfiniteScroll
@@ -121,14 +109,16 @@ const Home = () => {
         >
           {pokelist.map((pokemon) => {
             return (
-              <PokeCard
-                key={pokemon.id}
-                id={pokemon.id}
-                types={pokemon.types}
-                name={pokemon.name}
-                sprite={pokemon.sprite}
-                onClick={() => getPokemon(pokemon.id)}
-              />
+              <Link href={`/pokemon/${pokemon.id}`} key={pokemon.id}>
+                <a className="w-full">
+                <PokeCard
+                  id={pokemon.id}
+                  types={pokemon.types}
+                  name={pokemon.name}
+                  sprite={pokemon.sprite}
+                />
+                </a>
+              </Link>
             );
           })}
         </InfiniteScroll>
