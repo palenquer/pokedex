@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { fetchAllData } from "../utils/functions";
@@ -6,7 +6,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import PokeCard from "../components/PokeCard";
 import SearchInput from "../components/SearchInput";
 import Loading from "../components/Loading";
-import Link from "next/link";
+import { toast } from "react-toastify";
 
 interface DataProps {
   name: string;
@@ -29,12 +29,25 @@ interface PokeTypes {
 
 const Home = () => {
   const [pokelist, setPokelist] = useState<Pokelist[]>([]);
+  const [searchPokemon, setSearchPokemon] = useState<Pokelist>({
+    id: 0,
+    name: "",
+    sprite: "",
+    types: [""],
+  });
+  const [inputValue, setInputValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function getData(url: string) {
+    setLoading(true);
+
     const response = await axios
       .get(url)
-      .then((response) => response.data)
+      .then((response) => {
+        setLoading(false);
+        return response.data;
+      })
       .catch((error) => {
         console.error(error);
       });
@@ -58,35 +71,69 @@ const Home = () => {
   }
 
   async function fetchInicialData() {
-    setLoading(true);
-    const timer = setTimeout(async () => {
-      const inicialData = await getData(
-        "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"
-      );
+    const inicialData = await getData(
+      "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"
+    );
 
-      setPokelist(inicialData);
-
-      setLoading(false);
-
-      return () => clearTimeout(timer);
-    }, 2000);
+    setPokelist(inicialData);
   }
 
   async function fetchNextData() {
-    setLoading(true);
-    const timer = setTimeout(async () => {
-      const nextData = await getData(
-        `https://pokeapi.co/api/v2/pokemon/?offset=${pokelist.length}&limit=20`
-      );
+    const nextData = await getData(
+      `https://pokeapi.co/api/v2/pokemon/?offset=${pokelist.length}&limit=20`
+    );
 
-      const filterData = nextData.filter((item) => item.id <= 809);
+    const filterData = nextData.filter((item) => item.id <= 809);
 
-      setPokelist((oldList) => [...oldList, ...filterData]);
+    setPokelist((oldList) => [...oldList, ...filterData]);
+  }
 
-      setLoading(false);
+  async function handleInputValue(e: React.ChangeEvent<HTMLInputElement>) {
+    setInputValue(e.target.value);
+  }
 
-      return () => clearTimeout(timer);
-    }, 2000);
+  async function getSearchPokemon(e: React.FormEvent) {
+    e.preventDefault();
+
+    setSearchPokemon({
+      id: 0,
+      name: "",
+      sprite: "",
+      types: [""],
+    });
+
+    const handleValue = inputValue;
+
+    setSearchValue(handleValue);
+
+    if (handleValue != "") {
+      setLoading(true);
+
+      const response = await axios
+        .get(`https://pokeapi.co/api/v2/pokemon/${handleValue}`)
+        .then((response) => {
+          setLoading(false);
+          return response.data;
+        })
+        .catch((error) => {
+          setLoading(false);
+          setSearchValue("");
+          setInputValue("");
+          toast.error("Pokemon not found!");
+          return console.error(error);
+        });
+
+      if (response) {
+        const pokeFilter = {
+          id: response.id,
+          name: response.name,
+          sprite: response.sprites.front_default,
+          types: response.types.map((res: PokeTypes) => res.type.name),
+        };
+
+        setSearchPokemon(pokeFilter);
+      }
+    }
   }
 
   useEffect(() => {
@@ -99,31 +146,41 @@ const Home = () => {
         <title>Pokedéx | Home</title>
       </Head>
 
-      <main className="lg:mx-auto lg:container lg:px-40 md:py-8 p-4 flex flex-col">
-        <SearchInput />
+      <main className="lg:mx-auto lg:container lg:px-40 md:py-8 p-4 flex flex-col gap-4">
+        <SearchInput
+          onSubmit={getSearchPokemon}
+          onChange={handleInputValue}
+          value={inputValue}
+        />
 
-        <InfiniteScroll
-          dataLength={pokelist.length}
-          next={fetchNextData}
-          className="flex flex-col items-center gap-8 sm:grid grid-cols-2 xl:grid-cols-4 h-96 overflow-auto p-4"
-          hasMore={true}
-          loader={false}
-        >
-          {pokelist.map((pokemon) => {
-            return (
-              <Link href={`/pokemon/${pokemon.id}`} key={pokemon.id}>
-                <a className="w-full">
-                  <PokeCard
-                    id={pokemon.id}
-                    types={pokemon.types}
-                    name={pokemon.name}
-                    sprite={pokemon.sprite}
-                  />
-                </a>
-              </Link>
-            );
-          })}
-        </InfiniteScroll>
+        {searchPokemon.name != "" && searchValue != "" ? (
+          <PokeCard
+            id={searchPokemon.id}
+            types={searchPokemon.types}
+            name={searchPokemon.name}
+            sprite={searchPokemon.sprite}
+          />
+        ) : (
+          <InfiniteScroll
+            dataLength={pokelist.length}
+            next={fetchNextData}
+            className="flex flex-col items-center gap-8 sm:grid grid-cols-2 xl:grid-cols-4 overflow-auto h-96 p-4"
+            hasMore={true}
+            loader={false}
+          >
+            {pokelist.map((pokemon) => {
+              return (
+                <PokeCard
+                  key={pokemon.id}
+                  id={pokemon.id}
+                  types={pokemon.types}
+                  name={pokemon.name}
+                  sprite={pokemon.sprite}
+                />
+              );
+            })}
+          </InfiniteScroll>
+        )}
 
         {loading && <Loading />}
       </main>
