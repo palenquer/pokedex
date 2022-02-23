@@ -109,7 +109,7 @@ export default function Pokemon({ pokeinfo }: PageProps) {
           <div className="flex flex-col gap-8">
             {pokeinfo.stats.map((item) => {
               return (
-                <div className="flex flex-col items-center">
+                <div key={item.name} className="flex flex-col items-center">
                   <span className={`font-bold text-type-${pokeinfo.types[0]}`}>
                     {item.name}
                   </span>
