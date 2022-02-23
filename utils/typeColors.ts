@@ -39,3 +39,24 @@ export const borderColors = {
     electric: "border-type-electric",
     dragon: "border-type-dragon",
 }
+
+export const textColors = {
+  rock: "text-type-rock",
+  ghost: "text-type-ghost",
+  steel: "text-type-steel",
+  water: "text-type-water",
+  grass: "text-type-grass",
+  psychic: "text-type-psychic",
+  ice: "text-type-ice",
+  dark: "text-type-dark",
+  fairy: "text-type-fairy",
+  normal: "text-type-normal",
+  fighting: "text-type-fighting",
+  flying: "text-type-flying",
+  poison: "text-type-poison",
+  ground: "text-type-ground",
+  bug: "text-type-bug",
+  fire: "text-type-fire",
+  electric: "text-type-electric",
+  dragon: "text-type-dragon",
+}
