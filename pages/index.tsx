@@ -111,7 +111,7 @@ const Home = () => {
       types: [""],
     });
 
-    const handleValue = inputValue;
+    const handleValue = inputValue.toLowerCase();
 
     setSearchValue(handleValue);
 
