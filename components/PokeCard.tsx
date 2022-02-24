@@ -13,7 +13,7 @@ interface PokeCardProps {
 export default function PokeCard({ id, types, name, sprite }: PokeCardProps) {
   return (
     <motion.div
-      className={`flex flex-col justify-center items-center relative transition hover:scale-105 w-full max-w-[272px] justify-self-center`}
+      className={`flex flex-col justify-center items-center relative transition hover:scale-105 w-full sm:max-w-[272px] justify-self-center`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
