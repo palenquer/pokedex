@@ -1,34 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<p align="center">
+  <h1 align="center">Pokédex</h1>
+  
+  <p align="center">
+    <br />
+    <br />
+    <a href="https://pokedex-palenquer.vercel.app">DEMO</a>
+  </p>
+</p>
 
-## Getting Started
+<h2>Sobre o projeto</h2>
 
-First, run the development server:
+Projeto feito com ReactJS no intúito de melhorar minhas habilidades de consumir APIs utilizando a API [PokéAPI](https://pokeapi.co).
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+<h2>Dependências utilizadas</h2>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* [ReactJS](https://pt-br.reactjs.org)
+* [Typescript](https://www.typescriptlang.org)
+* [TailwindCSS](https://tailwindcss.com)
+* [Axios](https://axios-http.com/docs/intro)
+* [react-infinite-scroll-component](https://github.com/ankeetmaini/react-infinite-scroll-component)
+* [react-toastify](https://fkhadra.github.io/react-toastify/introduction)
+* [react-icons](https://react-icons.github.io/react-icons)
+* [NextJS](https://nextjs.org)
+* [RadixUI](https://www.radix-ui.com)
+* [FramerMotion](https://www.framer.com/motion/)
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Inicializando o Projeto
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Instalação
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+1. Clone o repositório
+   ```sh
+   git clone https://github.com/palenquer/pokedex
+   ```
+2. Instale o pacote node
+   ```sh
+   npm install // yarn install
+   ```
+3. Rode o projeto no seu terminal
+    ```sh
+   npm dev // yarn dev
+   ```
+4. Acesse o localhost indicado no terminal.
 
-## Learn More
+### Pré-requisitos
 
-To learn more about Next.js, take a look at the following resources:
+Para rodar o projeto, é preciso a instalação do node na sua máquina.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+* https://nodejs.org/en/
