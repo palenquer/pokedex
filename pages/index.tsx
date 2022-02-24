@@ -38,9 +38,15 @@ const Home = () => {
   const [inputValue, setInputValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  function timeout(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   async function getData(url: string) {
     setLoading(true);
+    await timeout(2000);
 
     const response = await axios
       .get(url)
@@ -49,6 +55,7 @@ const Home = () => {
         return response.data;
       })
       .catch((error) => {
+        setLoading(false);
         console.error(error);
       });
 
@@ -83,9 +90,11 @@ const Home = () => {
       `https://pokeapi.co/api/v2/pokemon/?offset=${pokelist.length}&limit=20`
     );
 
-    const filterData = nextData.filter((item) => item.id <= 809);
+    const filterData = nextData.filter((item) => item.id <= 898);
 
     setPokelist((oldList) => [...oldList, ...filterData]);
+
+    return filterData;
   }
 
   async function handleInputValue(e: React.ChangeEvent<HTMLInputElement>) {
@@ -107,19 +116,21 @@ const Home = () => {
     setSearchValue(handleValue);
 
     if (handleValue != "") {
-      setLoading(true);
+      setSearchLoading(true);
 
       const response = await axios
         .get(`https://pokeapi.co/api/v2/pokemon/${handleValue}`)
         .then((response) => {
-          setLoading(false);
+          setSearchLoading(false);
           return response.data;
         })
         .catch((error) => {
-          setLoading(false);
+          setSearchLoading(false);
           setSearchValue("");
           setInputValue("");
-          toast.error("Pokemon not found!");
+          toast.error("Pokemon not found!", {
+            theme: "colored",
+          });
           return console.error(error);
         });
 
@@ -148,10 +159,16 @@ const Home = () => {
 
       <main className="lg:mx-auto lg:container lg:px-40 md:py-8 p-4 flex flex-col gap-4">
         <SearchInput
+          onClick={() => {
+            setSearchValue("");
+            setInputValue("");
+          }}
           onSubmit={getSearchPokemon}
           onChange={handleInputValue}
           value={inputValue}
         />
+
+        {searchLoading && <Loading />}
 
         {searchPokemon.name != "" && searchValue != "" ? (
           <PokeCard
@@ -181,7 +198,6 @@ const Home = () => {
             })}
           </InfiniteScroll>
         )}
-
         {loading && <Loading />}
       </main>
     </>
