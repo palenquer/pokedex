@@ -17,7 +17,7 @@ export default function PokeCard({ id, types, name, sprite }: PokeCardProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ ease: "easeOut", duration: 1 }}
+      transition={{ ease: "easeOut", duration: 0.2 }}
     >
       <Link href={`/pokemon/${id}`}>
         <a
