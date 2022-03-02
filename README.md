@@ -3,14 +3,14 @@
   
   <p align="center">
     <br />
-    <br />
+  <img src="/assets/readmeimg.png" alt="Project Image">
     <a href="https://pokedex-palenquer.vercel.app">DEMO</a>
   </p>
 </p>
 
 <h2>Sobre o projeto</h2>
 
-Projeto feito com ReactJS no intúito de melhorar minhas habilidades de consumir APIs utilizando a API [PokéAPI](https://pokeapi.co).
+Projeto feito com ReactJS no intúito de melhorar minhas habilidades de consumir APIs utilizando a API [PokéAPI](https://pokeapi.co). Ao acessar a página, é possível dar scroll para carregar mais 20 pokemons, clicar no pokemon desejado para mostrar as informações do mesmo em uma nova página e pesquisar um pokemon pelo nome ou id na página inicial.
 
 <h2>Dependências utilizadas</h2>
 
