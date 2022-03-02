@@ -7,6 +7,7 @@ import PokeCard from "../components/PokeCard";
 import SearchInput from "../components/SearchInput";
 import Loading from "../components/Loading";
 import { toast } from "react-toastify";
+import { usePokelist } from "../hooks/pokeList";
 
 interface DataProps {
   name: string;
@@ -28,7 +29,7 @@ interface PokeTypes {
 }
 
 const Home = () => {
-  const [pokelist, setPokelist] = useState<Pokelist[]>([]);
+  const { pokelist, updatePokelist } = usePokelist();
   const [searchPokemon, setSearchPokemon] = useState<Pokelist>({
     id: 0,
     name: "",
@@ -39,14 +40,10 @@ const Home = () => {
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
-
-  function timeout(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  const [hasMore, setHasMore] = useState(true);
 
   async function getData(url: string) {
     setLoading(true);
-    await timeout(2000);
 
     const response = await axios
       .get(url)
@@ -78,23 +75,30 @@ const Home = () => {
   }
 
   async function fetchInicialData() {
-    const inicialData = await getData(
-      "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"
-    );
+    if (pokelist.length == 0) {
+      const inicialData = await getData(
+        "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"
+      );
 
-    setPokelist(inicialData);
+      updatePokelist(inicialData);
+    }
   }
 
   async function fetchNextData() {
+    if (pokelist.length >= 800) {
+      setHasMore(false);
+      return;
+    }
+
     const nextData = await getData(
       `https://pokeapi.co/api/v2/pokemon/?offset=${pokelist.length}&limit=20`
     );
 
-    const filterData = nextData.filter((item) => item.id <= 898);
+    const concatData = [...pokelist, ...nextData];
 
-    setPokelist((oldList) => [...oldList, ...filterData]);
+    updatePokelist(concatData);
 
-    return filterData;
+    return nextData;
   }
 
   async function handleInputValue(e: React.ChangeEvent<HTMLInputElement>) {
@@ -183,7 +187,7 @@ const Home = () => {
             next={fetchNextData}
             className="flex flex-col items-center gap-8 sm:grid grid-cols-2 xl:grid-cols-4 overflow-auto h-96 p-4"
             hasMore={true}
-            loader={false}
+            loader={hasMore}
           >
             {pokelist.map((pokemon) => {
               return (
