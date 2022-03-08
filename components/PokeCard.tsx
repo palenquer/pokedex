@@ -37,8 +37,9 @@ export default function PokeCard({ id, types, name, sprite }: PokeCardProps) {
 
           <div className="flex flex-col items-center w-full bg-white rounded-md p-4">
             <img src={sprite} alt="sprite" />
-
-            <TypeBox types={types} />
+            <div className="flex gap-2">
+              <TypeBox types={types} />
+            </div>
           </div>
         </a>
       </Link>
