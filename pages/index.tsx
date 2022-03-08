@@ -8,6 +8,7 @@ import SearchInput from "../components/SearchInput";
 import Loading from "../components/Loading";
 import { toast } from "react-toastify";
 import { usePokelist } from "../hooks/pokeList";
+import Filter from "../components/Filter";
 
 interface DataProps {
   name: string;
@@ -41,6 +42,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [filterComponent, setFilterComponent] = useState(false);
 
   async function getData(url: string) {
     setLoading(true);
@@ -169,8 +171,20 @@ const Home = () => {
           }}
           onSubmit={getSearchPokemon}
           onChange={handleInputValue}
+          onClickFilter={() => {
+            setFilterComponent(!filterComponent);
+          }}
           value={inputValue}
+          filterIsOn={filterComponent}
         />
+
+        {filterComponent && (
+          <Filter
+            onClick={() => {
+              console.log("teste");
+            }}
+          />
+        )}
 
         {searchLoading && <Loading />}
 
