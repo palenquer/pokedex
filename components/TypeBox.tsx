@@ -1,12 +1,12 @@
 import React from "react";
 
 interface TypeBoxProps {
-  types: [string];
+  types: string[];
 }
 
 export default function TypeBox({ types }: TypeBoxProps) {
   return (
-    <div className="flex gap-2">
+    <>
       {types.map((type) => {
         return (
           <span
@@ -17,6 +17,6 @@ export default function TypeBox({ types }: TypeBoxProps) {
           </span>
         );
       })}
-    </div>
+    </>
   );
 }
