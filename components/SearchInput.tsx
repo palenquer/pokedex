@@ -1,11 +1,17 @@
 import React from "react";
-import { AiOutlineSearch, AiOutlineClose } from "react-icons/ai";
+import {
+  AiOutlineSearch,
+  AiOutlineClose,
+  AiTwotoneFilter,
+} from "react-icons/ai";
 
 interface SearchInputProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (event: React.FormEvent) => void;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickFilter: (event: React.MouseEvent<HTMLButtonElement>) => void;
   value: string;
+  filterIsOn: boolean;
 }
 
 export default function SearchInput({
@@ -13,10 +19,12 @@ export default function SearchInput({
   value,
   onSubmit,
   onClick,
+  onClickFilter,
+  filterIsOn
 }: SearchInputProps) {
   return (
     <form
-      className="relative focus-within:text-darkgray flex gap-4"
+      className="relative focus-within:text-darkgray flex gap-2"
       onSubmit={onSubmit}
     >
       <label className="w-full relative">
@@ -27,20 +35,26 @@ export default function SearchInput({
           placeholder="Search for a name or id"
           onChange={onChange}
         />
-        <button
-          className="absolute top-1/2 transform -translate-y-1/2 right-0 h-full w-12 flex items-center justify-center"
-          type="button"
-          onClick={onClick}
-        >
-          <AiOutlineClose className="text-mediumgray" size={20} />
-        </button>
+        {value.length != 0 && (
+          <button
+            className="absolute top-1/2 transform -translate-y-1/2 right-0 h-full w-12 flex items-center justify-center"
+            type="button"
+            onClick={onClick}
+          >
+            <AiOutlineClose className="text-mediumgray" size={20} />
+          </button>
+        )}
       </label>
 
       <button
-        className="bg-lightgray w-14 rounded-md flex justify-center items-center hover:brightness-90"
+        className="border-lightgray border-2 w-14 rounded-md flex justify-center items-center hover:bg-white"
         type="submit"
       >
         <AiOutlineSearch className="text-mediumgray" size={22} />
+      </button>
+
+      <button className={`border-lightgray border-2 w-14 rounded-md flex justify-center items-center hover:bg-white ${filterIsOn && 'bg-white'}`} onClick={onClickFilter}>
+        <AiTwotoneFilter className="text-mediumgray" size={22} />
       </button>
     </form>
   );
