@@ -54,7 +54,10 @@ export default function Pokemon({ pokeinfo }: PageProps) {
   return (
     <>
       <Head>
-        <title>Pokedéx | {pokeinfo.name.charAt(0).toUpperCase() + pokeinfo.name.slice(1)}</title>
+        <title>
+          Pokedéx|
+          {pokeinfo.name.charAt(0).toUpperCase() + pokeinfo.name.slice(1)}
+        </title>
       </Head>
 
       <main className="md:mt-20 p-4 flex justify-center">
@@ -83,8 +86,9 @@ export default function Pokemon({ pokeinfo }: PageProps) {
                   src={pokeinfo.sprite}
                   alt="pokemon sprite"
                 />
-
-                <TypeBox types={pokeinfo.types} />
+                <div className="flex gap-2">
+                  <TypeBox types={pokeinfo.types} />
+                </div>
               </figure>
 
               <div className="flex items-center gap-4">
