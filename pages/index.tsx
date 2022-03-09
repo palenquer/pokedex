@@ -252,7 +252,7 @@ const Home = () => {
         )}
 
         {filterTypes && searchValue === "" && (
-          <div className="flex items-center justify-center relative">
+          <div className="flex items-center sm:justify-center relative">
             <span
               className={`flex items-center justify-center text-center w-32 h-10 text-background bg-type-${filterTypes} rounded-full font-bold`}
             >
