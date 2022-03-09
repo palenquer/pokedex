@@ -19,6 +19,27 @@ export const backgroundColors = {
   dragon: "bg-type-dragon",
 };
 
+export const hoverBackgroundColors = {
+  rock: "hover:bg-type-rock",
+  ghost: "hover:bg-type-ghost",
+  steel: "hover:bg-type-steel",
+  water: "hover:bg-type-water",
+  grass: "hover:bg-type-grass",
+  psychic: "hover:bg-type-psychic",
+  ice: "hover:bg-type-ice",
+  dark: "hover:bg-type-dark",
+  fairy: "hover:bg-type-fairy",
+  normal: "hover:bg-type-normal",
+  fighting: "hover:bg-type-fighting",
+  flying: "hover:bg-type-flying",
+  poison: "hover:bg-type-poison",
+  ground: "hover:bg-type-ground",
+  bug: "hover:bg-type-bug",
+  fire: "hover:bg-type-fire",
+  electric: "hover:bg-type-electric",
+  dragon: "hover:bg-type-dragon",
+};
+
 export const borderColors = {
     rock: "border-type-rock",
     ghost: "border-type-ghost",
