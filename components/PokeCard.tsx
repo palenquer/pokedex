@@ -26,11 +26,11 @@ export default function PokeCard({ id, types, name, sprite }: PokeCardProps) {
           <div
             className={`w-full flex items-center text-background p-2 relative`}
           >
-            <h1 className="w-full text-center text-lg font-bold">
+            <h1 className="w-full text-md font-bold">
               {name.toUpperCase()}
             </h1>
 
-            <span className=" absolute top-2 right-2 ml-auto font-bold">
+            <span className=" absolute top-[10px] text-sm right-2 ml-auto font-bold">
               #{id}
             </span>
           </div>
