@@ -1,23 +1,17 @@
 import React from "react";
-import { types } from "../utils/types";
 
 interface FilterProps {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  item: string;
 }
 
-export default function Filter({ onClick }: FilterProps) {
+export default function Filter({ onClick, item }: FilterProps) {
   return (
-    <div className="border-lightgray border-2 p-4 rounded-md grid grid-cols-3 sm:grid-cols-6 2xl:grid-cols-10 gap-2 text-center">
-      {types.map((item) => {
-        return (
-          <button
-            className={`font-bold p-1 px-2 rounded-md text-sm text-background h-20 bg-type-${item} brightness-90 hover:brightness-110`}
-            onClick={onClick}
-          >
-            {item.toUpperCase()}
-          </button>
-        );
-      })}
-    </div>
+    <button
+      className={`font-bold p-1 px-2 rounded-md text-background bg-type-${item} h-20 hover:brightness-110 hover:transition`}
+      onClick={onClick}
+    >
+      {item.toUpperCase()}
+    </button>
   );
 }
