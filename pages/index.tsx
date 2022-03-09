@@ -2,17 +2,26 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import axios from "axios";
 import { fetchAllData } from "../utils/functions";
+
+import { AiOutlineClose } from "react-icons/ai";
 import InfiniteScroll from "react-infinite-scroll-component";
 import PokeCard from "../components/PokeCard";
 import SearchInput from "../components/SearchInput";
 import Loading from "../components/Loading";
-import { toast } from "react-toastify";
-import { usePokelist } from "../hooks/pokeList";
 import Filter from "../components/Filter";
+import { toast } from "react-toastify";
+
+import { usePokelist } from "../hooks/pokeList";
+import { types } from "../utils/types";
 
 interface DataProps {
   name: string;
   url: string;
+}
+
+interface PokeFilter {
+  pokemon: DataProps;
+  slot: number;
 }
 
 interface Pokelist {
@@ -31,18 +40,21 @@ interface PokeTypes {
 
 const Home = () => {
   const { pokelist, updatePokelist } = usePokelist();
+
   const [searchPokemon, setSearchPokemon] = useState<Pokelist>({
     id: 0,
     name: "",
     sprite: "",
     types: [""],
   });
+  const [pokefilter, setPokeFilter] = useState<Pokelist[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [filterComponent, setFilterComponent] = useState(false);
+  const [filterTypes, setFilterTypes] = useState<string>("");
 
   async function getData(url: string) {
     setLoading(true);
@@ -153,6 +165,52 @@ const Home = () => {
     }
   }
 
+  async function addType(item: string) {
+    setHasMore(false);
+    setSearchLoading(true);
+    setFilterTypes(item);
+
+    const results = await axios
+      .get(`https://pokeapi.co/api/v2/type/${item}`)
+      .then((response) => {
+        setSearchLoading(false);
+        return response.data.pokemon;
+      })
+      .catch((error) => {
+        setSearchLoading(false);
+        console.error(error);
+      });
+
+    const data = results.map((item: PokeFilter) => item.pokemon);
+    const urls = data.map((item: DataProps) => item.url);
+
+    const dataFilter = await fetchAllData(urls).then((response) => {
+      return response
+        .map((item) => {
+          return {
+            id: item.id,
+            name: item.name,
+            sprite: item.sprites.front_default,
+            types: item.types.map((res: PokeTypes) => res.type.name),
+          };
+        })
+        .filter((item) => item.id < 800);
+    });
+
+    setPokeFilter(dataFilter);
+
+    return dataFilter;
+  }
+
+  function handleFilterComponent() {
+    setFilterComponent(!filterComponent);
+  }
+
+  function handleClearFilter() {
+    setHasMore(true);
+    setFilterTypes("");
+  }
+
   useEffect(() => {
     fetchInicialData();
   }, []);
@@ -168,22 +226,47 @@ const Home = () => {
           onClick={() => {
             setSearchValue("");
             setInputValue("");
+            setSearchPokemon({
+              id: 0,
+              name: "",
+              sprite: "",
+              types: [""],
+            });
           }}
           onSubmit={getSearchPokemon}
           onChange={handleInputValue}
-          onClickFilter={() => {
-            setFilterComponent(!filterComponent);
-          }}
+          onClickFilter={handleFilterComponent}
           value={inputValue}
           filterIsOn={filterComponent}
+          searchPokemon={searchPokemon}
         />
 
-        {filterComponent && (
-          <Filter
-            onClick={() => {
-              console.log("teste");
-            }}
-          />
+        {filterComponent && searchValue === "" &&(
+          <div className="grid grid-cols-2 sm:grid-cols-6 2xl:grid-cols-9 gap-2">
+            {types.map((item) => {
+              return (
+                <Filter key={item} item={item} onClick={() => addType(item)} />
+              );
+            })}
+          </div>
+        )}
+
+        {filterTypes && searchValue === "" && (
+          <div className="flex items-center justify-center relative">
+            <span
+              className={`flex items-center justify-center text-center w-32 h-10 text-background bg-type-${filterTypes} rounded-full font-bold`}
+            >
+              {filterTypes.toUpperCase()}
+            </span>
+
+            <button
+              className="absolute right-0 flex items-center text-type-fighting border-2 rounded-md p-2"
+              onClick={handleClearFilter}
+            >
+              <AiOutlineClose />
+              <span>Clear filter</span>
+            </button>
+          </div>
         )}
 
         {searchLoading && <Loading />}
@@ -199,21 +282,33 @@ const Home = () => {
           <InfiniteScroll
             dataLength={pokelist.length}
             next={fetchNextData}
-            className="flex flex-col items-center gap-8 sm:grid grid-cols-2 xl:grid-cols-4 overflow-auto h-96 p-4"
-            hasMore={true}
+            className="flex flex-col items-center gap-8 sm:grid grid-cols-2 xl:grid-cols-4 overflow-y-scroll h-96 p-4"
+            hasMore={hasMore}
             loader={hasMore}
           >
-            {pokelist.map((pokemon) => {
-              return (
-                <PokeCard
-                  key={pokemon.id}
-                  id={pokemon.id}
-                  types={pokemon.types}
-                  name={pokemon.name}
-                  sprite={pokemon.sprite}
-                />
-              );
-            })}
+            {filterTypes != ""
+              ? pokefilter.map((pokemon) => {
+                  return (
+                    <PokeCard
+                      key={pokemon.id}
+                      id={pokemon.id}
+                      types={pokemon.types}
+                      name={pokemon.name}
+                      sprite={pokemon.sprite}
+                    />
+                  );
+                })
+              : pokelist.map((pokemon) => {
+                  return (
+                    <PokeCard
+                      key={pokemon.id}
+                      id={pokemon.id}
+                      types={pokemon.types}
+                      name={pokemon.name}
+                      sprite={pokemon.sprite}
+                    />
+                  );
+                })}
           </InfiniteScroll>
         )}
         {loading && <Loading />}
