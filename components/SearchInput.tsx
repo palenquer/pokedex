@@ -12,6 +12,12 @@ interface SearchInputProps {
   onClickFilter: (event: React.MouseEvent<HTMLButtonElement>) => void;
   value: string;
   filterIsOn: boolean;
+  searchPokemon: {
+    id: number;
+    name: string;
+    sprite: string;
+    types: [string];
+  };
 }
 
 export default function SearchInput({
@@ -20,7 +26,8 @@ export default function SearchInput({
   onSubmit,
   onClick,
   onClickFilter,
-  filterIsOn
+  filterIsOn,
+  searchPokemon,
 }: SearchInputProps) {
   return (
     <form
@@ -29,7 +36,7 @@ export default function SearchInput({
     >
       <label className="w-full relative">
         <input
-          className="border-2 rounded-md border-lightgray py-3 px-4 bg-white placeholder-mediumgray text-darkgray appearance-none w-full focus:outline-none"
+          className="border-2 rounded-md border-lightgray py-3 px-4 bg-white placeholder-opacity-70 text-darkgray appearance-none w-full focus:outline-none"
           type="text"
           value={value}
           placeholder="Search for a name or id"
@@ -53,7 +60,14 @@ export default function SearchInput({
         <AiOutlineSearch className="text-mediumgray" size={22} />
       </button>
 
-      <button className={`border-lightgray border-2 w-14 rounded-md flex justify-center items-center hover:bg-white ${filterIsOn && 'bg-white'}`} onClick={onClickFilter}>
+      <button
+        className={`${
+          searchPokemon.id !== 0 && "hidden"
+        } border-lightgray border-2 w-14 rounded-md flex justify-center items-center hover:bg-white ${
+          filterIsOn && "bg-white"
+        }`}
+        onClick={onClickFilter}
+      >
         <AiTwotoneFilter className="text-mediumgray" size={22} />
       </button>
     </form>
