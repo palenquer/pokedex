@@ -55,7 +55,7 @@ export default function Pokemon({ pokeinfo }: PageProps) {
     <>
       <Head>
         <title>
-          Pokedéx|
+          Pokedéx |{" "}
           {pokeinfo.name.charAt(0).toUpperCase() + pokeinfo.name.slice(1)}
         </title>
       </Head>
